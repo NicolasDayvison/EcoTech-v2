@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <title>Login - EcoTech</title>
+  <style>
+    @keyframes fadeInUp {
+      0% {opacity: 0; transform: translateY(20px);}
+      100% {opacity: 1; transform: translateY(0);}
+    }
+    @keyframes pulseButton {
+      0%, 100% {transform: scale(1);}
+      50% {transform: scale(1.05);}
+    }
+    .animate-fadeInUp {animation: fadeInUp 0.6s ease-out both;}
+    .animate-pulseHover:hover {animation: pulseButton 0.6s ease-in-out infinite;}
+    .icon-hover:hover {transform: scale(1.2); transition: transform 0.3s;}
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-green-100 to-blue-100 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-green-700 text-white p-4 flex justify-between items-center fixed w-full top-0 shadow z-50 animate-fadeInUp">
+    <div class="flex items-center">
+      <img alt="Logo" class="rounded-full w-10 h-10 animate-fadeInUp" src="https://placehold.co/40x40"/>
+      <span class="ml-3 text-xl font-semibold">EcoTech</span>
+    </div>
+    <div class="relative">
+      <button class="text-2xl focus:outline-none" id="menu-button">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg transform scale-95 opacity-0 transition-all duration-300 ease-in-out hidden" id="menu">
+        <a class="block px-4 py-2 hover:bg-gray-200" href="#">Início</a>
+        <a class="block px-4 py-2 hover:bg-gray-200" href="#">Quem Somos</a>
+        <a class="block px-4 py-2 hover:bg-gray-200" href="#">Serviços</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow flex justify-center items-center mt-20 mb-10 px-4 animate-fadeInUp">
+    <div class="bg-white shadow-xl rounded-xl p-8 w-full max-w-md transform transition hover:shadow-2xl hover:scale-105 duration-500">
+      
+      <!-- Mensagens de status -->
+      {% if status == '1' %}
+      <div class="bg-red-500 text-white p-3 rounded mb-4 flex items-center animate-fadeInUp">
+        <i class="fas fa-exclamation-circle mr-2"></i>Email ou senha inválido.
+      </div>
+      {% endif %}
+      {% if status == '2' %}
+      <div class="bg-yellow-500 text-white p-3 rounded mb-4 flex items-center animate-fadeInUp">
+        <i class="fas fa-exclamation-triangle mr-2"></i>Faça login antes de acessar o sistema.
+      </div>
+      {% endif %}
+
+      <h1 class="text-center text-2xl font-bold mb-6 text-gray-800 animate-fadeInUp">Login</h1>
+
+      <form method="POST" action="{% url 'usuarios:valida_login' %}" class="animate-fadeInUp">
+        {% csrf_token %}
+
+        <div class="mb-4">
+          <label class="block mb-1 font-medium text-gray-700">Email:</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <i class="fas fa-envelope"></i>
+            </span>
+            <input name="email" type="email" required
+              class="w-full pl-10 pr-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-300 focus:outline-none"
+              placeholder="Digite seu email..." />
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label class="block mb-1 font-medium text-gray-700">Senha:</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <i class="fas fa-lock"></i>
+            </span>
+            <input name="senha" type="password" required
+              class="w-full pl-10 pr-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-300 focus:outline-none"
+              placeholder="Digite sua senha..." />
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <button type="submit"
+            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out animate-pulseHover">
+            <i class="fas fa-sign-in-alt mr-2"></i>Entrar
+          </button>
+
+          <a href="{% url 'usuarios:cadastro' %}"
+            class="bg-blue-500 hover:bg-blue-600 text-white text-center font-bold py-2 px-4 rounded transition duration-300 ease-in-out animate-pulseHover">
+            <i class="fas fa-user-plus mr-2"></i>Cadastrar-se
+          </a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-green-700 text-white text-center p-4 animate-fadeInUp">
+    <p>© EcoTech 2025 - Todos os direitos reservados.</p>
+    <div class="flex justify-center space-x-6 mt-2 text-lg">
+      <a href="#" class="hover:text-blue-200 icon-hover"><i class="fas fa-camera-retro"></i></a>
+      <a href="#" class="hover:text-blue-200 icon-hover"><i class="fas fa-plus-circle"></i></a>
+      <a href="#" class="hover:text-blue-200 icon-hover"><i class="fas fa-phone"></i></a>
+    </div>
+  </footer>
+
+  <script>
+    const button = document.getElementById('menu-button');
+    const menu = document.getElementById('menu');
+
+    button.addEventListener('click', () => {
+      if (menu.classList.contains('hidden')) {
+        menu.classList.remove('hidden');
+        setTimeout(() => {
+          menu.classList.remove('opacity-0', 'scale-95');
+          menu.classList.add('opacity-100', 'scale-100');
+        }, 10);
+      } else {
+        menu.classList.add('opacity-0', 'scale-95');
+        setTimeout(() => menu.classList.add('hidden'), 300);
+      }
+    });
+  </script>
+
+</body>
+</html>

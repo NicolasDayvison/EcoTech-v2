@@ -1,0 +1,130 @@
+<html>
+ <head>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+   body {
+     font-family: 'Roboto', sans-serif;
+   }
+  </style>
+  <title>EcoTech - Plataforma Sustentável</title>
+ </head>
+ <body class="bg-gray-100">
+  <!-- Header -->
+  <header class="bg-green-700 text-white p-4 flex justify-between items-center">
+   <div class="flex items-center">
+    <img alt="Logo" class="rounded-full" src="https://placehold.co/40x40"/>
+    <span class="ml-2 text-lg font-bold">
+     EcoTech
+    </span>
+   </div>
+   <div class="flex items-center space-x-4">
+    <div class="relative">
+     <button class="text-xl focus:outline-none" id="menu-button">
+      <i class="fas fa-bars"></i>
+     </button>
+     <div class="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg hidden" id="menu">
+      <a class="block px-4 py-2 hover:bg-gray-200" href="{% url 'plataforma:home' %}">
+       <i class="fas fa-home mr-2"></i>Início
+      </a>
+      <a class="block px-4 py-2 hover:bg-gray-200" href="{% url 'plataforma:sobre' %}">
+       <i class="fas fa-info-circle mr-2"></i>Quem Somos
+      </a>
+      <a class="block px-4 py-2 hover:bg-gray-200" href="{% url 'plataforma:servicos' %}">
+       <i class="fas fa-cogs mr-2"></i>Serviços
+      </a>
+      <a class="block px-4 py-2 hover:bg-gray-200" href="{% url 'usuarios:usuario' %}">
+       <i class="fas fa-user mr-2"></i>Meu Perfil
+      </a>
+     </div>
+    </div>
+   </div>
+  </header>
+{% csrf_token %}
+  <!-- Main Content -->
+  <main class="flex flex-col items-center justify-center min-h-[calc(100vh-160px)] bg-green-50 py-12 px-4">
+   <div class="text-center mb-12 max-w-2xl">
+    <h1 class="text-4xl font-bold text-green-700 mb-4">
+     Bem-vindo à EcoTech
+    </h1>
+    <p class="text-xl text-green-600">
+     Conectando doadores e coletores de sucatas eletrônicas para um futuro mais sustentável
+    </p>
+   </div>
+   
+   <div class="flex flex-wrap justify-center gap-8 w-full max-w-4xl">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full sm:w-96 transition transform hover:scale-105">
+     <div class="overflow-hidden rounded-t-lg">
+      <img alt="Imagem de doação" class="w-full h-48 object-cover hover:scale-110 transition duration-500" src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"/>
+     </div>
+     <h2 class="text-2xl font-bold text-green-700 mt-4">
+      <i class="fas fa-recycle mr-2"></i>Solicitar Coleta
+     </h2>
+     <p class="text-green-600 mt-2 mb-4">
+      Solicite a coleta de seus materiais eletrônicos diretamente em sua residência.
+     </p>
+     <a href="{% url 'plataforma:coleta' %}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-full transition duration-200">
+      Solicitar <i class="fas fa-arrow-right ml-2"></i>
+     </a>
+    </div>
+    
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full sm:w-96 transition transform hover:scale-105">
+     <div class="overflow-hidden rounded-t-lg">
+      <img alt="Imagem de coleta" class="w-full h-48 object-cover hover:scale-110 transition duration-500" src="https://images.unsplash.com/photo-1604176354204-9268737828e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"/>
+     </div>
+     <h2 class="text-2xl font-bold text-green-700 mt-4">
+      <i class="fas fa-hand-holding-heart mr-2"></i>Fazer Doação
+     </h2>
+     <p class="text-green-600 mt-2 mb-4">
+      Doe seus equipamentos eletrônicos e contribua para um futuro mais sustentável.
+     </p>
+     <a href="{% url 'plataforma:doacao' %}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-full transition duration-200">
+      Doar <i class="fas fa-arrow-right ml-2"></i>
+     </a>
+    </div>
+   </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-green-700 text-white p-6">
+   <div class="container mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center">
+     <div class="mb-4 md:mb-0">
+      <div class="flex items-center">
+       <img alt="Logo" class="rounded-full h-10 w-10" src="https://placehold.co/40x40"/>
+       <span class="ml-2 text-xl font-bold">EcoTech</span>
+      </div>
+      <p class="mt-2 text-green-100">Soluções sustentáveis para o descarte eletrônico</p>
+     </div>
+     
+     <div class="flex space-x-6">
+      <a href="{% url 'plataforma:home' %}" class="text-white hover:text-green-300 transition" title="Início">
+       <i class="fas fa-home text-xl"></i>
+      </a>
+      <a href="https://www.instagram.com" target="_blank" class="text-white hover:text-green-300 transition" title="Instagram">
+       <i class="fab fa-instagram text-xl"></i>
+      </a>
+      <a href="{% url 'plataforma:contato' %}" class="text-white hover:text-green-300 transition" title="Contato">
+       <i class="fas fa-phone text-xl"></i>
+      </a>
+      <a href="{% url 'usuarios:sair' %}" class="text-white hover:text-green-300 transition" title="Sair">
+       <i class="fas fa-sign-out-alt text-xl"></i>
+      </a>
+     </div>
+    </div>
+    <hr class="border-green-600 my-4">
+    <p class="text-center text-green-100">
+     © 2025 EcoTech - Todos os direitos reservados.
+    </p>
+   </div>
+  </footer>
+
+  <script>
+   document.getElementById('menu-button').addEventListener('click', function() {
+     var menu = document.getElementById('menu');
+     menu.classList.toggle('hidden');
+   });
+  </script>
+ </body>
+</html>

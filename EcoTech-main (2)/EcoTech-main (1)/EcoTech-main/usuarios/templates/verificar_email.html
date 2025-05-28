@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <title>Verificar Email - EcoTech</title>
+  <style>
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeInUp {
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    .codigo-input {
+      width: 3rem;
+      height: 3rem;
+      text-align: center;
+      font-size: 1.5rem;
+      border-radius: 0.5rem;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-green-100 to-blue-100 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-green-700 text-white p-4 flex justify-between items-center fixed w-full top-0 shadow z-50 animate-fadeInUp">
+    <div class="flex items-center">
+      <img alt="Logo" class="rounded-full w-10 h-10" src="https://placehold.co/40x40"/>
+      <span class="ml-3 text-xl font-semibold">EcoTech</span>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow flex justify-center items-center mt-20 mb-10 px-4">
+    <div class="bg-white shadow-2xl rounded-xl p-8 w-full max-w-md animate-fadeInUp">
+
+      {% if messages %}
+      {% for message in messages %}
+      <div class="{% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %} text-white p-3 rounded mb-4 flex items-center">
+        <i class="{% if message.tags == 'success' %}fas fa-check-circle{% else %}fas fa-exclamation-circle{% endif %} mr-2"></i>
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      <h2 class="text-center mb-6 text-2xl font-bold text-gray-800">Verificar Email</h2>
+      
+      <p class="text-center text-gray-600 mb-6">
+        Enviamos um código de verificação para <strong>{{ email }}</strong>.<br>
+        Por favor, insira o código abaixo para confirmar seu email.
+      </p>
+
+      <form method="POST" action="{% url 'usuarios:verificar_codigo' %}" class="space-y-6">
+        {% csrf_token %}
+        
+        <!-- Campo de código -->
+        <div class="flex justify-center gap-2">
+          <input type="text" name="codigo" maxlength="6" required
+            class="w-48 px-4 py-2 text-center text-2xl tracking-widest font-mono rounded border border-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
+            placeholder="000000"/>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <button type="submit"
+            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out hover:scale-105">
+            <i class="fas fa-check-circle mr-2"></i>Verificar Código
+          </button>
+
+          <form method="POST" action="{% url 'usuarios:reenviar_codigo' %}" class="inline">
+            {% csrf_token %}
+            <button type="submit"
+              class="w-full bg-blue-500 hover:bg-blue-600 text-white text-center font-bold py-2 px-4 rounded transition duration-300 ease-in-out hover:scale-105">
+              <i class="fas fa-paper-plane mr-2"></i>Reenviar Código
+            </button>
+          </form>
+        </div>
+
+        <p class="text-center text-sm text-gray-500 mt-4">
+          O código expira em 30 minutos. Se não recebeu o código,
+          verifique sua pasta de spam ou clique em "Reenviar Código".
+        </p>
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-green-700 text-white text-center p-4 animate-fadeInUp">
+    <p>© EcoTech 2025 - Todos os direitos reservados.</p>
+  </footer>
+
+</body>
+</html> 

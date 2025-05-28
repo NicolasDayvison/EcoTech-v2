@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <title>Meu Perfil - EcoTech</title>
+  <style>
+    @keyframes fadeInUp {
+      0% {opacity: 0; transform: translateY(20px);}
+      100% {opacity: 1; transform: translateY(0);}
+    }
+    .animate-fadeInUp {animation: fadeInUp 0.6s ease-out both;}
+    .progress-bar {
+      width: var(--progress);
+      height: 100%;
+      background-color: #22c55e;
+      transition: width 0.5s ease-out;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-green-100 to-blue-100 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-green-700 text-white p-4 flex justify-between items-center fixed w-full top-0 shadow z-50 animate-fadeInUp">
+    <div class="flex items-center">
+      <img alt="Logo" class="rounded-full w-10 h-10 animate-fadeInUp" src="https://placehold.co/40x40"/>
+      <span class="ml-3 text-xl font-semibold">EcoTech</span>
+    </div>
+    <nav class="flex items-center space-x-4">
+      <a href="{% url 'plataforma:home' %}" class="hover:text-green-200 transition duration-300">
+        <i class="fas fa-home mr-1"></i>Home
+      </a>
+      <a href="{% url 'usuarios:sair' %}" class="hover:text-green-200 transition duration-300">
+        <i class="fas fa-sign-out-alt mr-1"></i>Sair
+      </a>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto px-4 mt-24 mb-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Coluna da Esquerda - Perfil -->
+      <div class="md:col-span-1">
+        <div class="bg-white rounded-xl shadow-xl p-8 animate-fadeInUp">
+          {% if messages %}
+          {% for message in messages %}
+          <div class="{% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %} text-white p-3 rounded mb-4 flex items-center">
+            <i class="{% if message.tags == 'success' %}fas fa-check-circle{% else %}fas fa-exclamation-circle{% endif %} mr-2"></i>
+            {{ message }}
+          </div>
+          {% endfor %}
+          {% endif %}
+
+          <div class="text-center mb-8">
+            <form method="POST" action="{% url 'usuarios:atualizar_foto' %}" enctype="multipart/form-data" class="mb-4">
+              {% csrf_token %}
+              <div class="relative w-32 h-32 mx-auto">
+                {% if usuario.foto %}
+                <img src="{{ usuario.foto.url }}" alt="Foto de Perfil" class="w-32 h-32 rounded-full object-cover"/>
+                {% else %}
+                <div class="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center">
+                  <i class="fas fa-user-circle text-6xl text-green-600"></i>
+                </div>
+                {% endif %}
+                <label for="foto" class="absolute bottom-0 right-0 bg-green-600 text-white rounded-full p-2 cursor-pointer hover:bg-green-700 transition">
+                  <i class="fas fa-camera"></i>
+                  <input type="file" id="foto" name="foto" class="hidden" onchange="this.form.submit()"/>
+                </label>
+              </div>
+            </form>
+          </div>
+
+          <form method="POST" action="{% url 'usuarios:atualizar_perfil' %}" class="space-y-6">
+            {% csrf_token %}
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+              <input type="text" name="nome" value="{{ usuario.nome }}" required
+                class="w-full px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"/>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input type="email" name="email" value="{{ usuario.email }}" required
+                class="w-full px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"/>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nova Senha (opcional)</label>
+              <input type="password" name="nova_senha" minlength="8"
+                class="w-full px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
+                placeholder="Deixe em branco para manter a senha atual"/>
+            </div>
+
+            <div class="flex flex-col gap-4">
+              <button type="submit"
+                class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                <i class="fas fa-save mr-2"></i>Salvar Alterações
+              </button>
+            </div>
+          </form>
+
+          <hr class="my-8 border-gray-200">
+
+          <!-- Formulário de Cidade -->
+          <form method="POST" action="{% url 'usuarios:atualizar_cidade' %}" class="mb-6">
+            {% csrf_token %}
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Sua Cidade</label>
+              <input type="text" name="cidade" value="{{ usuario.cidade|default:'' }}" required
+                class="w-full px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"
+                placeholder="Ex: São Paulo"/>
+              <button type="submit"
+                class="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+                <i class="fas fa-map-marker-alt mr-2"></i>Atualizar Cidade
+              </button>
+            </div>
+          </form>
+
+          <div class="text-center">
+            <button onclick="confirmarExclusao()"
+              class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+              <i class="fas fa-trash-alt mr-2"></i>Excluir Conta
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coluna do Meio - Gamificação -->
+      <div class="md:col-span-1">
+        <div class="bg-white rounded-xl shadow-xl p-8 animate-fadeInUp">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">Seu Progresso</h2>
+          
+          <!-- Nível e Pontos -->
+          <div class="text-center mb-6">
+            <div class="inline-block bg-green-100 rounded-full p-4 mb-4">
+              <i class="fas fa-award text-4xl text-green-600"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800">Nível {{ usuario.nivel }}</h3>
+            <p class="text-gray-600">{{ info_pontos.pontos }} pontos</p>
+          </div>
+
+          <!-- Barra de Progresso -->
+          <div class="mb-6">
+            {% with progress=info_pontos.pontos_proximo_nivel %}
+            <div class="h-4 rounded-full bg-gray-200 overflow-hidden">
+              <div class="progress-bar" style="--progress: {{ progress }}%"></div>
+            </div>
+            <p class="text-sm text-gray-600 mt-2 text-center">
+              {{ progress }} pontos para o nível {{ info_pontos.proximo_nivel }}
+            </p>
+            {% endwith %}
+          </div>
+
+          <!-- Registrar Atividade -->
+          <form method="POST" action="{% url 'usuarios:registrar_atividade' %}" class="space-y-4">
+            {% csrf_token %}
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Atividade</label>
+              <select name="tipo" required
+                class="w-full px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none">
+                <option value="reciclagem_eletronico">Reciclagem de Peça eletronica defeituosa</option>
+                <option value="reciclagem_eletronico">Reciclagem de celular</option>
+                <option value="reciclagem_eletronico">Reciclagem de tablet</option>
+                <option value="reciclagem_eletronico">Reciclagem de notebook</option>
+                <option value="reciclagem_eletronico">Reciclagem de monitor</option>
+                <option value="reciclagem_eletronico">Reciclagem de mouse</option>
+                <option value="reciclagem_eletronico">Reciclagem de teclado</option>
+
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Quantidade</label>
+              <input type="number" name="quantidade" value="1" min="1" required
+                class="w-full px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-green-400 focus:outline-none"/>
+            </div>
+
+            <button type="submit"
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+              <i class="fas fa-plus-circle mr-2"></i>Registrar Atividade
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Coluna da Direita - Clima e Notícias -->
+      <div class="md:col-span-1">
+        <!-- Widget do Clima -->
+        {% if clima %}
+        <div class="bg-white rounded-xl shadow-xl p-8 mb-6 animate-fadeInUp">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">Clima em {{ usuario.cidade }}</h2>
+          <div class="text-center">
+            <img src="{{ clima.icone }}" alt="Condição do tempo" class="w-20 h-20 mx-auto mb-4"/>
+            <h3 class="text-3xl font-bold text-gray-800 mb-2">{{ clima.temperatura }}°C</h3>
+            <p class="text-gray-600">{{ clima.descricao }}</p>
+            <p class="text-gray-600">Umidade: {{ clima.umidade }}%</p>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Notícias Ambientais -->
+        <div class="bg-white rounded-xl shadow-xl p-8 animate-fadeInUp">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">Notícias Ambientais</h2>
+          <div class="space-y-6">
+            {% for noticia in noticias %}
+            <div class="border-b border-gray-200 pb-4 last:border-0 last:pb-0">
+              <h3 class="font-bold text-gray-800 mb-2">{{ noticia.titulo }}</h3>
+              <p class="text-gray-600 text-sm mb-2">{{ noticia.descricao }}</p>
+              <div class="flex justify-between items-center text-sm text-gray-500">
+                <span>{{ noticia.fonte }}</span>
+                <span>{{ noticia.data }}</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-green-700 text-white text-center p-4 animate-fadeInUp">
+    <p>© EcoTech 2025 - Todos os direitos reservados.</p>
+    <div class="flex justify-center space-x-6 mt-2">
+      <a href="#" class="hover:text-green-200 transition duration-300"><i class="fab fa-facebook"></i></a>
+      <a href="#" class="hover:text-green-200 transition duration-300"><i class="fab fa-instagram"></i></a>
+      <a href="#" class="hover:text-green-200 transition duration-300"><i class="fab fa-twitter"></i></a>
+    </div>
+  </footer>
+
+  <!-- Modal de Confirmação -->
+  <div id="modalExclusao" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-xl max-w-md w-full mx-4">
+      <h3 class="text-xl font-bold text-gray-900 mb-4">Confirmar Exclusão</h3>
+      <p class="text-gray-600 mb-6">Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.</p>
+      <div class="flex justify-end space-x-4">
+        <button onclick="fecharModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition">
+          Cancelar
+        </button>
+        <form method="POST" action="{% url 'usuarios:excluir_conta' %}" class="inline">
+          {% csrf_token %}
+          <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
+            Confirmar Exclusão
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function confirmarExclusao() {
+      document.getElementById('modalExclusao').classList.remove('hidden');
+    }
+
+    function fecharModal() {
+      document.getElementById('modalExclusao').classList.add('hidden');
+    }
+  </script>
+
+</body>
+</html> 
